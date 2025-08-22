@@ -1,112 +1,83 @@
 # Financial Analyst RAG Assistant
 
-A Retrieval-Augmented Generation (RAG) application for answering financial questions directly from corporate filings and reports using LangChain, FAISS, and HuggingFace Sentence Transformers.
 
-## Overview
+An end-to-end web application that serves as an intelligent assistant for financial analysis. The core of this project is a multi-tool ReAct agent built with LangChain, designed to answer complex financial queries by leveraging Retrieval-Augmented Generation (RAG), real-time web search, and Python-based data analysis.
 
-This project enables analysts and users to query financial data from embedded company documents such as 10-Ks, earnings reports, and press releases. It utilizes state-of-the-art semantic search and a question-answering pipeline to extract relevant insights with high accuracy.
+**This project demonstrates a comprehensive skill set in building production-ready AI applications, making it a powerful addition to a professional portfolio.**
 
-<p align="center">
-  <img src="docs/demo-screenshot.png" width="600" alt="Demo Screenshot">
-</p>
+**✨ Features**
+Multi-Tool LLM Agent: A central, intelligent agent that can reason and select the most appropriate tool to answer a user's query. The agent is powered by a local, quantized Mistral-7B LLM, eliminating reliance on external APIs.
 
----
+**Retrieval-Augmented Generation (RAG):** The ability to answer questions by retrieving information from a provided corpus of financial documents (PDFs) with a FAISS vector store and HuggingFace embeddings.
 
-## Architecture
+**Real-time Web Search**: A dedicated tool for fetching up-to-the-minute information like current stock prices or news headlines using the DuckDuckGo search API.
 
-<p align="center">
-  <img src="docs/arch-diagram.png" width="400" alt="Architecture">
-</p>
+**Python REPL Tool:** The agent can execute Python code in a secure sandbox to perform calculations and data analysis on retrieved data.
 
----
+**Interactive Chat UI: **A modern, single-page chat interface built with Streamlit that provides a seamless user experience for uploading documents and interacting with the agent.
 
-## Features
+**Containerization:** The entire application is configured for deployment with Docker, ensuring a consistent and portable environment.
 
-- **PDF ingestion**: Supports uploading and embedding financial documents in PDF format
-- **Semantic retrieval**: Chunks and embeds documents using `all-MiniLM-L6-v2`
-- **Retrieval-Augmented Generation (RAG)**: Combines FAISS retrieval with local or OpenAI-powered QA
-- **Streamlit Interface**: Simple, user-friendly frontend
-- **Fast indexing**: Local FAISS vector store for efficient semantic search
-- **Optional OpenAI Integration**: Enhances responses with GPT-backed reasoning
+**🚀 Technology Stack**
+Backend & Orchestration: Python, Streamlit, LangChain
 
----
+LLM: CTransformers with TheBloke/Mistral-7B-Instruct-v0.2-GGUF (local-first approach)
 
-## Setup Instructions
+Embeddings: HuggingFaceEmbeddings with sentence-transformers/all-MiniLM-L6-v2
 
-### 1. Clone the Repository
+Vector Store: FAISS (local, file-based)
 
-```bash
-git clone https://github.com/anshi312/financial-analyst-rag.git
-cd financial-analyst-rag
-```
+Tools: DuckDuckGo Search, Python REPL, Custom RAG Chain
 
-### 2. Create and Activate a Virtual Environment
+Containerization: Docker
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
+**⚙️ Setup and Installation**
+**Prerequisites
+**Python 3.10: It is highly recommended to use Python 3.10 to ensure compatibility with all dependencies.
+
+Docker (Optional): Required for containerized deployment.
+
+Local Installation
+Clone the repository:
+
+git clone https://github.com/your-username/financial_analyst_assistant.git
+cd financial_analyst_assistant
+
+Create and activate a virtual environment:
+
+python -m venv venv
+.\venv\Scripts\activate
+
+Install all required dependencies:
+
 pip install -r requirements.txt
-```
 
-### 3. Add Your Financial Documents
+**Create the initial vector database:**
+Place any PDF documents you want to use (e.g., 10-K filings) into the docs/ folder. Then, run the data ingestion script:
 
-Place all relevant PDF files inside the `data/` directory.
+python -m backend.rag.setup_rag
 
-### 4. Generate Embeddings and Build FAISS Index
+Note: This step is optional if you plan to upload files directly via the Streamlit UI, but it's useful for pre-populating the RAG system.
 
-```bash
-python embeddings/embed_store_faiss.py
-```
+**🏃 Usage**
+To launch the application, run the Streamlit app from the project's root directory:
 
-### 5. Launch the Application
+streamlit run app.py
 
-```bash
-python app.py
-```
+The application will open in your web browser. The first time you run it, the Mistral-7B LLM will be downloaded to your local machine (a one-time process). Once the model is loaded, you can upload your own financial documents via the sidebar and begin interacting with the AI assistant.
 
----
+**🐳 Containerization**
+For a production-ready and portable deployment, the project can be containerized using Docker.
 
-## Technologies Used
+Build the Docker image:
 
-- Python 3.10+
-- LangChain
-- FAISS
-- HuggingFace Sentence Transformers
-- PyMuPDF
-- Streamlit
-- OpenAI API (optional)
+docker build -t financial-analyst-assistant .
 
----
+Run the Docker container:
 
-## Project Structure
+docker run -p 8501:8501 financial-analyst-assistant
 
-```
-financial-analyst-rag/
-├── app.py                    # Main application
-├── data/                     # Financial reports in PDF
-├── embeddings/               # Embedding logic and indexing
-│   ├── embed_store_faiss.py
-│   ├── text_processor.py
-│   ├── test_faiss_query.py
-│   └── test_text_processor.py
-├── rag/                      # RAG pipeline modules
-│   ├── rag_pipeline.py
-│   └── setup_rag.py
-├── scraping/                 # (Optional) Financial web scrapers
-│   ├── earnings_scraper.py
-│   ├── news_scraper.py
-│   ├── sec_scraper.py
-│   └── utils.py
-├── test_env.py               # Environment variable test
-├── test_hf_pipeline.py       # QA pipeline test
-├── requirements.txt          # Python dependencies
-├── instruct.txt              # Prompt/instruction templates
-├── .gitignore
-└── README.md
-```
-
----
-
+The application will be accessible at http://localhost:8501.
 ## Example Queries
 
 - “What was Netflix’s total revenue in 2024?”
@@ -114,19 +85,6 @@ financial-analyst-rag/
 - “Compare Microsoft and Apple’s R&D expenditure for the last fiscal year.”
 
 ---
-
-## Security Notes
-
-- API keys are excluded via `.gitignore`.
-- Store API credentials securely in `config/.env`.
-
-**Example**:
-
-```
-OPENAI_API_KEY=your-key-here
-```
-
-**Do not** hardcode secrets directly into the source files.
 
 ---
 "# FinancialAnalyst-RAG" 
